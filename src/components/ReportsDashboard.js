@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import './ReportsDashboard.css';
+import ReportDetailsModal from './ReportDetailsModal';
 
 const ReportsDashboard = ({ onLogout }) => {
   const [activeTab, setActiveTab] = useState('ALL');
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   // Sample data - replace with actual API data
   const reportsData = {
@@ -13,7 +16,11 @@ const ReportsDashboard = ({ onLogout }) => {
         location: 'MG Road, Indore',
         date: '11/10/2025',
         status: 'PENDING',
-        description: 'Large pothole near the intersection causing traffic issues'
+        description: 'Large pothole near the intersection causing traffic issues and vehicle damage. Multiple complaints received from local residents.',
+        severity: 'High',
+        images: ['image1.jpg', 'image2.jpg'],
+        reporter: 'Citizen User',
+        zone: 'Indore Central'
       },
       {
         id: 2,
@@ -21,15 +28,35 @@ const ReportsDashboard = ({ onLogout }) => {
         location: 'AB Road, Indore',
         date: '10/10/2025',
         status: 'VERIFIED',
-        description: 'Water accumulation after heavy rainfall'
+        description: 'Water accumulation after heavy rainfall, creating traffic jams and pedestrian movement issues.',
+        severity: 'Medium',
+        images: ['image3.jpg'],
+        reporter: 'Traffic Police',
+        zone: 'Indore West'
       },
       {
         id: 3,
         type: 'Debris',
         location: 'Rajwada Area, Indore',
         date: '09/10/2025',
-        status: 'SENT TO ZONAL',
-        description: 'Construction debris blocking the road'
+        status: 'SENT_TO_ZONAL',
+        description: 'Construction debris blocking the road near historical monument area. Affecting tourism and local business.',
+        severity: 'Low',
+        images: ['image4.jpg', 'image5.jpg'],
+        reporter: 'Local Business Owner',
+        zone: 'Indore Central'
+      },
+      {
+        id: 4,
+        type: 'Pothole',
+        location: 'Vijay Nagar, Indore',
+        date: '12/10/2025',
+        status: 'PENDING',
+        description: 'Multiple small potholes on residential road causing inconvenience to residents.',
+        severity: 'Medium',
+        images: [],
+        reporter: 'Resident Welfare Association',
+        zone: 'Indore East'
       }
     ],
     PENDING: [
@@ -39,7 +66,23 @@ const ReportsDashboard = ({ onLogout }) => {
         location: 'MG Road, Indore',
         date: '11/10/2025',
         status: 'PENDING',
-        description: 'Large pothole near the intersection causing traffic issues'
+        description: 'Large pothole near the intersection causing traffic issues and vehicle damage. Multiple complaints received from local residents.',
+        severity: 'High',
+        images: ['image1.jpg', 'image2.jpg'],
+        reporter: 'Citizen User',
+        zone: 'Indore Central'
+      },
+      {
+        id: 4,
+        type: 'Pothole',
+        location: 'Vijay Nagar, Indore',
+        date: '12/10/2025',
+        status: 'PENDING',
+        description: 'Multiple small potholes on residential road causing inconvenience to residents.',
+        severity: 'Medium',
+        images: [],
+        reporter: 'Resident Welfare Association',
+        zone: 'Indore East'
       }
     ],
     VERIFIED: [
@@ -49,7 +92,11 @@ const ReportsDashboard = ({ onLogout }) => {
         location: 'AB Road, Indore',
         date: '10/10/2025',
         status: 'VERIFIED',
-        description: 'Water accumulation after heavy rainfall'
+        description: 'Water accumulation after heavy rainfall, creating traffic jams and pedestrian movement issues.',
+        severity: 'Medium',
+        images: ['image3.jpg'],
+        reporter: 'Traffic Police',
+        zone: 'Indore West'
       }
     ],
     SENT_TO_ZONAL: [
@@ -58,18 +105,34 @@ const ReportsDashboard = ({ onLogout }) => {
         type: 'Debris',
         location: 'Rajwada Area, Indore',
         date: '09/10/2025',
-        status: 'SENT TO ZONAL',
-        description: 'Construction debris blocking the road'
+        status: 'SENT_TO_ZONAL',
+        description: 'Construction debris blocking the road near historical monument area. Affecting tourism and local business.',
+        severity: 'Low',
+        images: ['image4.jpg', 'image5.jpg'],
+        reporter: 'Local Business Owner',
+        zone: 'Indore Central'
       }
     ]
+  };
+
+  // Function to handle view details
+  const handleViewDetails = (report) => {
+    setSelectedReport(report);
+    setIsModalOpen(true);
+  };
+
+  // Function to close modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedReport(null);
   };
 
   const ReportCard = ({ report }) => (
     <div className="report-card">
       <div className="report-header">
         <h3 className="report-type">{report.type}</h3>
-        <span className={`status-badge status-${report.status.replace(' ', '_')}`}>
-          {report.status}
+        <span className={`status-badge status-${report.status}`}>
+          {report.status.replace('_', ' ')}
         </span>
       </div>
       <div className="report-details">
@@ -78,7 +141,12 @@ const ReportsDashboard = ({ onLogout }) => {
         <p className="report-description">{report.description}</p>
       </div>
       <div className="report-actions">
-        <button className="view-details-btn">View Details</button>
+        <button 
+          className="view-details-btn"
+          onClick={() => handleViewDetails(report)}
+        >
+          View Details
+        </button>
         {report.status === 'PENDING' && (
           <>
             <button className="verify-btn">Verify</button>
@@ -159,6 +227,13 @@ const ReportsDashboard = ({ onLogout }) => {
           <p className="stat-count">{reportsData.SENT_TO_ZONAL.length}</p>
         </div>
       </section>
+
+      {/* Report Details Modal */}
+      <ReportDetailsModal 
+        report={selectedReport}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };

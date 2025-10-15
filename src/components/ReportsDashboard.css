@@ -283,3 +283,14 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Add this to your existing ReportsDashboard.css */
+.view-details-btn:hover {
+  background: #5a6fd8;
+  transform: translateY(-2px);
+}
+
+/* Ensure the button has proper transitions */
+.view-details-btn, .verify-btn, .reject-btn {
+  transition: all 0.3s ease;
+}
